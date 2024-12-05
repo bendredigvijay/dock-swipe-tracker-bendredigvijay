@@ -16,7 +16,9 @@ class Extension extends PanelMenu.Button {
         // Create the label
         this._label = new St.Label({
             text: `🔴 In Time: ${this._totalTime} H`,
-            style_class: "panel-status-indicator-label"
+            style_class: "status-indicator",
+            reactive: true,
+            track_hover: true,
         });
 
         // Add the label to the button
@@ -27,6 +29,8 @@ class Extension extends PanelMenu.Button {
             this._fetchSwipeData();
             return GLib.SOURCE_CONTINUE;
         });
+
+        global.log("Extension initialized.");
     }
 
     _updateIndicatorText() {
@@ -78,6 +82,11 @@ class Extension extends PanelMenu.Button {
     }
 });
 
+// Initialize and add the extension to the panel
 function init() {
-    return new Extension();
+    global.log("Initializing the extension...");
+    let extensionInstance = new Extension();
+    Main.panel.addToStatusArea('dock-swipe-tracker', extensionInstance);
+    global.log("Extension added to status area.");
+    return extensionInstance;
 }
