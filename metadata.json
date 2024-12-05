@@ -1,0 +1,7 @@
+{
+  "name": "dock-swipe-tracker",
+  "description": "Track and display swipe status",
+  "uuid": "dock-swipe-tracker@magaramol",
+  "shell-version": ["42"],
+  "version": 1
+}
