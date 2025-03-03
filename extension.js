@@ -178,7 +178,7 @@ const DockSwipeTracker = GObject.registerClass(
     }
 
     _updateUI() {
-      log(
+      log(  
         `[DockSwipeTracker] Updating UI -> Status: ${this._status}, TotalTime: ${this._totalTime}, LastUpdate: ${this._lastUpdate}`
       );
 
