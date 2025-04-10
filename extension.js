@@ -113,7 +113,7 @@ const DockSwipeTracker = GObject.registerClass(
       const css = `
 .swipe-panel {
     padding: 5px 12px;
-    background-color: rgba(40,40,40,0.85);
+    background-color: rgba(0, 0, 0, 0.99);
     border-radius: 8px;
     border: 1px solid rgba(255,255,255,0.1);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -121,7 +121,7 @@ const DockSwipeTracker = GObject.registerClass(
 }
 
 .swipe-panel:hover {
-    background-color: rgba(60,60,60,0.95);
+    background-color: rgb(0, 0, 0);
 }
 
 .status-icon {
@@ -131,6 +131,7 @@ const DockSwipeTracker = GObject.registerClass(
 .time-label {
     font-weight: bold;
     font-size: 13px;
+    margin-top: 5px;
     color: #fff;
 }
 
@@ -178,7 +179,7 @@ const DockSwipeTracker = GObject.registerClass(
     }
 
     _updateUI() {
-      log(  
+      log(
         `[DockSwipeTracker] Updating UI -> Status: ${this._status}, TotalTime: ${this._totalTime}, LastUpdate: ${this._lastUpdate}`
       );
 
@@ -187,11 +188,36 @@ const DockSwipeTracker = GObject.registerClass(
 
       this.statusIcon.set_icon_name(statusIcon);
       this.statusIcon.style = `color: ${statusColor}`;
-      this.timeLabel.text = `${this._totalTime.toFixed(1)} H`;
+
+      // Convert total time to hours and minutes
+      const totalSeconds = Math.floor(this._totalTime * 3600);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+      log(`[DockSwipeTracker] Time -> Hours: ${hours}, Minutes: ${minutes}`);
+
+      if (this._status === "IN") {
+        this.timeLabel.text = `${hours}H ${minutes}M In ho bhai`;
+        this.timeLabel.style = "color:rgb(128, 228, 21); animation: blink 1s step-start 0s infinite;";
+      } else {
+        this.timeLabel.text = `${hours}H ${minutes}M Inn kro bhai`;
+        this.timeLabel.style = "color:rgb(248, 0, 45);";
+      }
 
       this.statusItem.label.set_text(`Status: ${this._status}`);
-      this.timeItem.label.set_text(`Today's Total: ${this._totalTime.toFixed(1)} Hours`);
+      this.timeItem.label.set_text(`Today's Total: ${hours}H ${minutes}M`);
       this.lastUpdateItem.label.set_text(`Last Sync: ${this._lastUpdate.toLocaleTimeString()}`);
+
+      // Change panel background color based on total hours
+      const panelBackgroundColor = this._totalTime < 8 ? "rgba(146, 6, 31, 0.9)" : "rgba(29, 54, 2, 0.9)";
+      this.panelContainer.style = `background-color: ${panelBackgroundColor}`;
+
+      // Add tooltip if total hours exceed 8
+      if (this._totalTime >= 8) {
+        this.panelContainer.set_tooltip_text("Time ho gaya, nikal ja!");
+      } else {
+        this.panelContainer.set_tooltip_text(null);
+      }
     }
 
     _fetchSwipeData() {
